@@ -9,16 +9,18 @@
   justify-content: center;
   padding: 20px;
   color: #1c1e21; /* Dark text color */
+  box-sizing: border-box; /* Include padding in element's total width and height */
 }
 
 .main-page, .recognition-page {
-  background-color: #ffffff;
+  background-color: #ffffff; /* Original background */
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  max-width: 600px; /* Limit width on larger screens */
   width: 100%;
   margin: 20px auto;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -32,6 +34,21 @@ p {
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 25px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center buttons horizontally within the group */
+  width: 100%; /* Ensure the button group takes full width to center its content */
+}
+
+.recognition-button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center buttons horizontally within the group */
+  width: 100%; /* Ensure the button group takes full width to center its content */
+  margin-top: 15px; /* Add some top margin to separate from results */
 }
 
 .analyze-button {
@@ -49,6 +66,14 @@ p {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  max-width: 300px; /* Limit button width for better aesthetics on larger screens */
+  margin-left: auto; /* Explicitly center horizontally */
+  margin-right: auto; /* Explicitly center horizontally */
+  margin-bottom: 15px; /* Add bottom margin for spacing between buttons */
+}
+
+.analyze-button:last-child {
+  margin-bottom: 0; /* Remove bottom margin for the last button in a group */
 }
 
 .analyze-button:hover {
@@ -73,6 +98,8 @@ p {
   background-color: #f9f9f9;
   border-radius: 10px;
   border: 1px solid #e0e0e0;
+  width: 100%; /* Ensure it takes full width */
+  box-sizing: border-box;
 }
 
 .result-container h2 {
@@ -117,6 +144,7 @@ p {
   background-color: #fcfcfc;
   cursor: pointer;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .image-upload-container:hover {
@@ -175,4 +203,115 @@ p {
   color: #888; /* Slightly darker gray for disclaimer */
   margin-top: 30px;
   line-height: 1.5;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px; /* Reduce overall padding on smaller screens */
+  }
+
+  .main-page, .recognition-page {
+    padding: 20px; /* Reduce padding inside containers */
+    margin: 10px auto; /* Adjust margin */
+  }
+
+  h1 {
+    font-size: 2rem; /* Smaller heading for mobile */
+  }
+
+  p {
+    font-size: 1rem; /* Smaller paragraph text */
+    margin-bottom: 20px;
+  }
+
+  .analyze-button {
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    margin-left: auto; /* Explicitly center horizontally */
+    margin-right: auto; /* Explicitly center horizontally */
+    margin-bottom: 10px; /* Smaller bottom margin for mobile */
+  }
+
+  .analyze-button:last-child {
+    margin-bottom: 0;
+  }
+
+  .result-container {
+    padding: 15px;
+  }
+
+  .result-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .result-item {
+    font-size: 1rem;
+    padding: 8px 0;
+  }
+
+  .image-upload-container {
+    height: 200px; /* Slightly smaller upload area on mobile */
+    margin: 20px auto;
+  }
+
+  .image-upload-container .upload-icon {
+    font-size: 3rem;
+  }
+
+  .image-upload-container .upload-text {
+    font-size: 1rem;
+  }
+
+  .image-upload-container .upload-subtext {
+    font-size: 0.8rem;
+  }
+
+  .disclaimer-text {
+    font-size: 0.75rem;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-page, .recognition-page {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+
+  .analyze-button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    margin-left: auto; /* Explicitly center horizontally */
+    margin-right: auto; /* Explicitly center horizontally */
+    margin-bottom: 8px; /* Even smaller bottom margin for very small screens */
+  }
+
+  .analyze-button:last-child {
+    margin-bottom: 0;
+  }
+
+  .result-container h2 {
+    font-size: 1.3rem;
+  }
+
+  .result-item {
+    font-size: 0.9rem;
+  }
+
+  .image-upload-container {
+    height: 180px;
+  }
+
+  .image-upload-container .upload-icon {
+    font-size: 2.5rem;
+  }
 }

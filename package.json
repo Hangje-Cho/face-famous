@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "client-start": "CHOKIDAR_USEPOLLING=true react-scripts start"
   },
   "author": "",
   "license": "ISC",
