@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "NODE_ENV=development nodemon index.js",
     "start": "node index.js",
     "build": "react-scripts build",
-    "client-start": "CHOKIDAR_USEPOLLING=true react-scripts start"
+    "client": "CHOKIDAR_USEPOLLING=true react-scripts start",
+    "dev:full": "npm run client"
   },
   "author": "",
   "license": "ISC",

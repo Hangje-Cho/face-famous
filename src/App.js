@@ -4,7 +4,7 @@ import * as tmImage from '@teachablemachine/image';
 
 // RecognitionPage Component: This component encapsulates the logic for an image analysis page.
 // It can be reused for different types of analysis by passing different model URLs and content.
-function RecognitionPage({ modelURL, metadataURL, title, description, onBackToMain }) {
+function RecognitionPage({ modelURL, metadataURL, title, description, resultTitle, onBackToMain }) {
   const [status, setStatus] = useState('initial');
   const [predictions, setPredictions] = useState([]);
   const [imageURL, setImageURL] = useState(null);
@@ -44,6 +44,7 @@ function RecognitionPage({ modelURL, metadataURL, title, description, onBackToMa
     setPredictions([]);
     setErrorMessage('');
     setStatus('initial');
+    modelRef.current = null; // Clear model cache
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Clear the file input value
     }
@@ -60,19 +61,17 @@ function RecognitionPage({ modelURL, metadataURL, title, description, onBackToMa
     setErrorMessage('');
 
     try {
-      // Load the model only once
-      if (!modelRef.current) {
-        const model = await tmImage.load(modelURL, metadataURL);
-        modelRef.current = model;
-      }
+      // Always reload the model to get the latest version
+      modelRef.current = null;
+      const model = await tmImage.load(modelURL, metadataURL);
+      modelRef.current = model;
 
-      const model = modelRef.current;
       // Predict the image and sort predictions by probability
       const prediction = await model.predict(imageRef.current);
       setPredictions(prediction.sort((a, b) => b.probability - a.probability));
       setStatus('result');
     } catch (error) {
-      console.error("Image analysis failed:", error);
+      console.error("사진 분석 실패:", error);
       setErrorMessage('사진 분석에 실패했어요. 다시 시도해주세요!');
       setStatus('error');
     }
@@ -95,21 +94,26 @@ function RecognitionPage({ modelURL, metadataURL, title, description, onBackToMa
         )}
         <label htmlFor="file-upload" className="custom-file-upload"></label>
         <input id="file-upload" type="file" onChange={handleImageUpload} accept="image/*" ref={fileInputRef} className="file-input" />
-        {imageURL && <img src={imageURL} alt="Uploaded" ref={imageRef} className="uploaded-image" />}
+        {imageURL && <img src={imageURL} alt="업로드된 사진" ref={imageRef} className="uploaded-image" />}
       </div>
 
       {status !== 'result' && (
-          <button className="analyze-button" onClick={analyzeImage} disabled={status === 'loading' || !imageURL}>
-            {status === 'loading' ? '궁금한 동물상 분석 중...' : <>내 닮은 꼴 찾아줘! &rarr;</>}
-          </button>
+          <>
+            <button className="analyze-button" onClick={analyzeImage} disabled={status === 'loading' || !imageURL}>
+              {status === 'loading' ? '분석 중...' : <>내 닮은 꼴 찾아줘! &rarr;</>}
+            </button>
+            {status === 'loading' && (
+              <p className="loading-message">🔍 AI가 열심히 분석하고 있어요...</p>
+            )}
+          </>
         )}
 
         {errorMessage && <p className="error-message">🚨 {errorMessage}</p>}
 
       {status === 'result' && (
           <div className="result-container">
-            <h2>💖 당신의 매력적인 동물상은요...! 💖</h2>
-            {predictions.map((p, i) => (
+            <h2>{resultTitle}</h2>
+            {predictions.slice(0, 5).map((p, i) => (
               <div className="result-item" key={i}>
                 <span className="class-name">{p.className}</span>
                 <span className="probability">{(p.probability * 100).toFixed(1)}%</span>
@@ -140,9 +144,10 @@ function App() {
   const animalFaceModelURL = 'https://teachablemachine.withgoogle.com/models/oNZQSWQ5f/model.json';
   const animalFaceMetadataURL = 'https://teachablemachine.withgoogle.com/models/oNZQSWQ5f/metadata.json';
 
-  // Model URLs for the new page (currently using the same model as animal face recognition)
-  const newPageModelURL = 'https://teachablemachine.withgoogle.com/models/oNZQSWQ5f/model.json';
-  const newPageMetadataURL = 'https://teachablemachine.withgoogle.com/models/oNZQSWQ5f/metadata.json';
+  // Model URLs for the Italian Brainrot page
+  const timestamp = Date.now();
+  const italianBrainrotModelURL = `https://teachablemachine.withgoogle.com/models/a1kRVJ4EZ/model.json?t=${timestamp}`;
+  const italianBrainrotMetadataURL = `https://teachablemachine.withgoogle.com/models/a1kRVJ4EZ/metadata.json?t=${timestamp}`;
 
   const [currentPage, setCurrentPage] = useState('main');
 
@@ -151,8 +156,8 @@ function App() {
     setCurrentPage('animalFaceRecognition');
   };
 
-  const startNewPageRecognition = () => {
-    setCurrentPage('newPageRecognition');
+  const startItalianBrainrotRecognition = () => {
+    setCurrentPage('italianBrainrotRecognition');
   };
 
   const backToMain = () => {
@@ -164,14 +169,14 @@ function App() {
       {/* Main Page: Allows selection of which recognition page to visit */}
       {currentPage === 'main' && (
         <div className="main-page">
-          <h1>✨ 내 얼굴에서 동물상 찾기! ✨</h1>
-          <p>궁금하시죠? 얼굴 사진을 올리면 AI가 당신의 매력적인 동물상을 찾아드려요!</p>
+          <h1>✨ 내 얼굴에서 AI 닮은꼴 찾기! ✨</h1>
+          <p>궁금하시죠? 얼굴 사진을 올리면 AI가 당신과 닮은 매력적인 캐릭터를 찾아드려요!</p>
           <div className="button-group"> {/* Re-added div to group buttons */}
             <button className="analyze-button" onClick={startAnimalFaceRecognition}>
               동물상 찾기 시작하기
             </button>
-            <button className="analyze-button" onClick={startNewPageRecognition}> 
-              새로운 분석 시작하기
+            <button className="analyze-button" onClick={startItalianBrainrotRecognition}> 
+              이탈리안 브레인롯 분석하기
             </button>
           </div>
         </div>
@@ -184,17 +189,19 @@ function App() {
           metadataURL={animalFaceMetadataURL}
           title="🐾 내 얼굴에서 동물상 찾기 🐾"
           description="잘 나온 셀카 한 장을 업로드 해주세요.<br />(정면 사진이면 분석이 더 잘된다는 소문이...)"
+          resultTitle="💖 당신의 매력적인 동물상은요...! 💖"
           onBackToMain={backToMain}
         />
       )}
 
-      {/* New Recognition Page (a copy of the animal face page functionality) */}
-      {currentPage === 'newPageRecognition' && (
+      {/* Italian Brainrot Recognition Page */}
+      {currentPage === 'italianBrainrotRecognition' && (
         <RecognitionPage
-          modelURL={newPageModelURL}
-          metadataURL={newPageMetadataURL}
-          title="✨ 신규 분석 페이지 ✨"
-          description="이곳은 새로운 분석 페이지입니다.<br />동물상 분석과 동일한 기능을 제공합니다."
+          modelURL={italianBrainrotModelURL}
+          metadataURL={italianBrainrotMetadataURL}
+          title="🍝 이탈리안 브레인롯 분석 🍝"
+          description="당신의 이탈리안 브레인롯 지수를 측정해보세요!<br />셀카를 업로드하면 AI가 분석해드립니다."
+          resultTitle="🍝 당신의 이탈리안 브레인롯 지수는...! 🍝"
           onBackToMain={backToMain}
         />
       )}
