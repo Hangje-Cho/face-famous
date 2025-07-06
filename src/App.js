@@ -44,7 +44,6 @@ function RecognitionPage({ modelURL, metadataURL, title, description, resultTitl
     setPredictions([]);
     setErrorMessage('');
     setStatus('initial');
-    modelRef.current = null; // Clear model cache
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Clear the file input value
     }
@@ -61,11 +60,13 @@ function RecognitionPage({ modelURL, metadataURL, title, description, resultTitl
     setErrorMessage('');
 
     try {
-      // Always reload the model to get the latest version
-      modelRef.current = null;
-      const model = await tmImage.load(modelURL, metadataURL);
-      modelRef.current = model;
+      // Load the model only once
+      if (!modelRef.current) {
+        const model = await tmImage.load(modelURL, metadataURL);
+        modelRef.current = model;
+      }
 
+      const model = modelRef.current;
       // Predict the image and sort predictions by probability
       const prediction = await model.predict(imageRef.current);
       setPredictions(prediction.sort((a, b) => b.probability - a.probability));
@@ -145,9 +146,8 @@ function App() {
   const animalFaceMetadataURL = 'https://teachablemachine.withgoogle.com/models/oNZQSWQ5f/metadata.json';
 
   // Model URLs for the Italian Brainrot page
-  const timestamp = Date.now();
-  const italianBrainrotModelURL = `https://teachablemachine.withgoogle.com/models/a1kRVJ4EZ/model.json?t=${timestamp}`;
-  const italianBrainrotMetadataURL = `https://teachablemachine.withgoogle.com/models/a1kRVJ4EZ/metadata.json?t=${timestamp}`;
+  const italianBrainrotModelURL = 'https://teachablemachine.withgoogle.com/models/a1kRVJ4EZ/model.json';
+  const italianBrainrotMetadataURL = 'https://teachablemachine.withgoogle.com/models/a1kRVJ4EZ/metadata.json';
 
   const [currentPage, setCurrentPage] = useState('main');
 
