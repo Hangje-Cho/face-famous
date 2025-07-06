@@ -152,6 +152,9 @@ p {
   transition: border-color 0.3s ease;
   box-sizing: border-box;
   touch-action: manipulation;
+  /* 모바일 터치 개선 */
+  -webkit-tap-highlight-color: rgba(155, 125, 226, 0.1);
+  user-select: none;
 }
 
 .image-upload-container:hover {
